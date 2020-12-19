@@ -1,53 +1,63 @@
 "use strict";
 
 {
-  //スクリーンサイズ//
-  const SCREEN_SIZE_WIDTH = 256;
-  const SCREEN_SIZE_HEIGHT = 224;
+  //基本のスクリーンサイズ//
+  const SCREEN_SIZE_W = 256;
+  const SCREEN_SIZE_H = 224;
+
   const GAME_FPS = 1000/60; //1000msの1/60(秒間60回)
-
-  //canvasの描画準備//
-  let can = document.getElementById("can");
-  let con = can.getContext("2d");
-
-  //virtualCanvasの生成（倍率制御）
-  let vcan = document.createElement("canvas");
-  let vcon = vcan.getContext("2d");
 
   //時間管理の変数//
   let frameCount = 0;//画面上のタイマー
-  let startTime = 0;//requestAnimationFrame()の正確な更新を制御する
-
-
-  //画面の生成//
-  vcan.width  = SCREEN_SIZE_WIDTH;
-  vcan.height = SCREEN_SIZE_HEIGHT;
-  can.width  = SCREEN_SIZE_WIDTH * 2;
-  can.height = SCREEN_SIZE_HEIGHT* 2;
+  let startTime  = 0;//requestAnimationFrame()の正確な更新を制御する
   
+  //virtualCanvasの生成（倍率制御）
+  let vcan = document.createElement("canvas");
+  let vcon = vcan.getContext("2d");
+  //canvasの描画準備(下記)//
+  let  can = document.getElementById("can");
+  let  con = can.getContext("2d");
+  //画面の生成//
+  vcan.width  = SCREEN_SIZE_W;
+  vcan.height = SCREEN_SIZE_H;
+  can.width   = SCREEN_SIZE_W * 2;
+  can.height  = SCREEN_SIZE_H * 2;
+  // canvasのボヤけを修正
+  con.mozimageSmoothingEnabled    = false;
+  con.msimageSmoothingEnabled     = false;
+  con.webkitimageSmoothingEnabled = false;
+  con.imageSmoothingEnabled       = false;
+
   //キャラクターの生成//
   let chImg = new Image();
   chImg.src = "sprite.png";
   chImg.onload = draw;
   
+  //marioの情報
+  let mario_x = 100;
+  let mario_y = 150;
 
+  //更新処理
   function update(){
   }
   
-  //画面描画処理//
+  //描画処理(仮想環境に描画後、実描画に再描画)//
   function draw(){
-    //背景
+    //背景画像を表示
     vcon.fillStyle = "#66AAFF";
-    vcon.fillRect(0, 0, SCREEN_SIZE_WIDTH, SCREEN_SIZE_HEIGHT);
-    //キャラクター
-    vcon.drawImage(chImg,  80, 0, 16, 32,  16, 32, 16, 32);
+    vcon.fillRect(0, 0, SCREEN_SIZE_W, SCREEN_SIZE_H);
+    //キャラを表示
+    vcon.drawImage(chImg,  0, 0, 16, 32,  mario_x, mario_y, 16, 32);
     //drawImageメソッド
     //前半が描画の始点と、始点からの描画読み取り範囲
     //後半がcanvasの開始地点とcanvasの表示領域
+
+    //時間経過
     vcon.font = "16px 'Impact'";
     vcon.fillStyle ="white";
     vcon.fillText(`Frame:${frameCount}`,10,20);
-    con.drawImage(vcan, 0,0,SCREEN_SIZE_WIDTH,SCREEN_SIZE_HEIGHT ,0,0,SCREEN_SIZE_WIDTH*3,SCREEN_SIZE_HEIGHT*3);
+    //仮想描画から実描画へ拡大転送
+    con.drawImage(vcan,0,0,vcan.width,vcan.height,  0,0,can.width,can.height);
   }
 
   //メインループ//
@@ -77,4 +87,17 @@
     startTime = performance.now();
     mainLoop();
   }
+
+  //キーボードの処理
+  let keyb = [];
+
+  window.addEventListener("keydown" , (e) => {
+    if(e.key === "ArrowRight") keyb.Left = true;
+    if(e.key === "ArrowLeft") keyb.Right = true;
+  });
+  window.addEventListener("keyup" , (e) => {
+    if(e.key === "ArrowRight") keyb.Left = false;
+    if(e.key === "ArrowLeft") keyb.Right = false;
+  });
+
 }
