@@ -33,18 +33,24 @@
     //drawImageメソッド
     //前半が描画の始点とそこからの描画読み取り範囲
     //後半がcanvasの開始地点とcanvasの表示領域
-    frameCount++;
+    con.font = "16px 'Impact'";
     con.fillStyle ="white";
-    con.fillText("Frame:"+frameCount,10,10)
+    con.fillText(`Frame:${frameCount}`,10,20)
   }
 
   //メインループ//
   function mainLoop(){
+    frameCount++;
     update();
     draw();
     // setTimeout(mainLoop,1000/60);
+    requestAnimationFrame(mainLoop);
   }
-
-  setInterval(mainLoop,1000/60);
   // mainLoop();
+
+  //windowの描画が完了後、            //
+  //ループ処理を開始（実行・呼び出し）//
+  window.onload = function(){
+    mainLoop();
+  }
 }
