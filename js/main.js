@@ -36,9 +36,20 @@
   //marioの情報
   let mario_x = 100;
   let mario_y = 150;
+  let mario_vx = 0;
 
   //更新処理
   function update(){
+    if(keyb.Left ){
+      if(mario_vx > -1) mario_vx -= 1/10;
+    } else if(keyb.Right){
+      if(mario_vx < 1 ) mario_vx += 1/10;
+    } else {
+      if(mario_vx > 0)mario_vx -= 1/10;
+      if(mario_vx < 0)mario_vx += 1/10;
+    }
+    console.log(mario_vx);
+    mario_x += mario_vx;
   }
   
   //描画処理(仮想環境に描画後、実描画に再描画)//
@@ -88,16 +99,19 @@
     mainLoop();
   }
 
-  //キーボードの処理
+  //キーボードの処理(連想配列を用意)
   let keyb = [];
 
   window.addEventListener("keydown" , (e) => {
-    if(e.key === "ArrowRight") keyb.Left = true;
-    if(e.key === "ArrowLeft") keyb.Right = true;
+    if(e.key === "ArrowRight") keyb.Right = true;
+    if(e.key === "ArrowLeft") keyb.Left = true;
   });
   window.addEventListener("keyup" , (e) => {
-    if(e.key === "ArrowRight") keyb.Left = false;
-    if(e.key === "ArrowLeft") keyb.Right = false;
-  });
-
+    if(e.key === "ArrowRight"){
+      keyb.Right = false;
+    };
+    if(e.key === "ArrowLeft"){
+      keyb.Left = false;
+    };
+});
 }
