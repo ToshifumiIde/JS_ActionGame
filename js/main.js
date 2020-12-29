@@ -34,31 +34,41 @@
   chImg.onload = draw;
   
   //marioの情報
-  let mario_x = 100;
-  let mario_y = 150;
+  let mario_x = 100<<4;
+  let mario_y = 150<<4;
   let mario_vx = 0;
+  let mario_sprite = 0;
 
   //更新処理
   function update(){
     if(keyb.Left ){
-      if(mario_vx > -1) mario_vx -= 1/10;
+      mario_sprite = 48;
+      if(mario_vx > -32) mario_vx -= 1;
     } else if(keyb.Right){
-      if(mario_vx < 1 ) mario_vx += 1/10;
+      mario_sprite = 0;
+      if(mario_vx < 32 ) mario_vx += 1;
     } else {
-      if(mario_vx > 0)mario_vx -= 1/10;
-      if(mario_vx < 0)mario_vx += 1/10;
+      if(mario_vx > 0)mario_vx -= 1;
+      if(mario_vx < 0)mario_vx += 1;
     }
     console.log(mario_vx);
     mario_x += mario_vx;
   }
   
+
+  function drawSprite(spriteSum, x, y){
+    let sx = (spriteSum % 16) * 16;
+    let sy = (spriteSum >> 4) * 16;
+    vcon.drawImage(chImg, sx,sy,16,32 ,x,y,16,32);
+  }
+
   //描画処理(仮想環境に描画後、実描画に再描画)//
   function draw(){
     //背景画像を表示
     vcon.fillStyle = "#66AAFF";
     vcon.fillRect(0, 0, SCREEN_SIZE_W, SCREEN_SIZE_H);
     //キャラを表示
-    vcon.drawImage(chImg,  0, 0, 16, 32,  mario_x, mario_y, 16, 32);
+    drawSprite(mario_sprite, mario_x>>4 ,mario_y>>4);
     //drawImageメソッド
     //前半が描画の始点と、始点からの描画読み取り範囲
     //後半がcanvasの開始地点とcanvasの表示領域
